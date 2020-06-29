@@ -1,4 +1,26 @@
 function statement(invoice, plays) {
+    function amountFor(aPerformance, play) {
+        let thisAmount;
+        switch (play.type) {
+            case "tragedy":
+                thisAmount = 40000;
+                if (aPerformance.audience > 30) {
+                    thisAmount += 1000 * (aPerformance.audience - 30);
+                }
+                break;
+            case "comedy":
+                thisAmount = 30000;
+                if (aPerformance.audience > 20) {
+                    thisAmount += 10000 + 500 * (aPerformance.audience - 20);
+                }
+                thisAmount += 300 * aPerformance.audience;
+                break;
+            default:
+                throw new Error('알 수 없는 장르: ${play.type}');
+        }
+        return thisAmount;
+    }
+
     let totalAmount = 0;
     let volumeCredits = 0;
     let result = `청구 내역 (고객명: ${invoice.customer})\n`;
@@ -10,25 +32,7 @@ function statement(invoice, plays) {
 
     for (let perf of invoice.performances) {
         const play = plays[perf.playID];
-        let thisAmount = 0;
-
-        switch (play.type) {
-            case "tragedy":
-                thisAmount = 40000;
-                if (perf.audience > 30) {
-                    thisAmount += 1000 * (perf.audience - 30);
-                }
-                break;
-            case "comedy":
-                thisAmount = 30000;
-                if (perf.audience > 20) {
-                    thisAmount += 10000 + 500 * (perf.audience - 20);
-                }
-                thisAmount += 300 * perf.audience;
-                break;
-            default:
-                throw new Error('알 수 없는 장르: ${play.type}');
-        }
+        const thisAmount = amountFor(perf, play);
 
         // 포인트를 적립한다.
         volumeCredits += Math.max(perf.audience - 30, 0);
@@ -47,4 +51,17 @@ function statement(invoice, plays) {
 let invoices = require('./invoices.json');
 let plays = require('./plays.json');
 
-console.log(statement(invoices, plays));
+function testStatement(invoices, plays) {
+    const result = statement(invoices, plays);
+    const actual =
+`청구 내역 (고객명: BigCo)
+ Hamlet: $650.00 (55석)
+ As You Like It: $580.00 (35석)
+ Othello: $500.00 (40석)
+총액: $1,730.00
+적립 포인트: 47점
+`;
+    console.log(`테스트 결과: ${actual === result ? '성공' : '실패'}`);
+}
+
+testStatement(invoices, plays);
