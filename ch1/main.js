@@ -2,6 +2,7 @@ function statement(invoice, plays) {
     const statementData = {};
     statementData.customer = invoice.customer;
     statementData.performances = invoice.performances;
+    statementData.plays = plays;
     return renderPlainText(statementData, plays);
 }
 
@@ -37,7 +38,7 @@ function renderPlainText(data, plays) {
     }
 
     function playFor(perf) {
-        return plays[perf.playID];
+        return data.plays[perf.playID];
     }
 
     function volumeCreditsFor(aPerformance) {
