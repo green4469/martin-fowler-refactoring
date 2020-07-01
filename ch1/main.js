@@ -1,10 +1,20 @@
 function statement(invoice, plays) {
     const statementData = {};
     statementData.customer = invoice.customer;
-    statementData.performances = invoice.performances;
-    statementData.plays = plays;
+    statementData.performances = invoice.performances.map(perf => enrichPerformance(perf));
     return renderPlainText(statementData);
+
+    function enrichPerformance(aPerformance) {
+        const result = Object.assign({}, aPerformance);
+        result.play = playFor(result)
+        return result;
+    }
+
+    function playFor(perf) {
+        return plays[perf.playID];
+    }
 }
+
 
 function renderPlainText(data) {
     let result = `청구 내역 (고객명: ${data.customer})\n`;
