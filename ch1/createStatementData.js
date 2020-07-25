@@ -46,18 +46,11 @@ class PerformanceCalculator {
     }
 
     get amount() {
-        switch (this.play.type) {
-            case "tragedy":
-                throw new Error('Invalid access');
-            case "comedy":
-                throw new Error('Invalid access');
-            default:
-                throw new Error('알 수 없는 장르: ${this.play.type}');
-        }
+        throw new Error('Invalid access');
     }
 
     get volumeCredits() {
-        throw new Error('Invalid access');
+        return Math.max(this.performance.audience - 30, 0);
     }
 }
 
@@ -67,12 +60,6 @@ class TragedyCalculator extends PerformanceCalculator {
         if (this.performance.audience > 30) {
             result += 1000 * (this.performance.audience - 30);
         }
-        return result;
-    }
-
-    get volumeCredits() {
-        let result = 0;
-        result += Math.max(this.performance.audience - 30, 0);
         return result;
     }
 }
@@ -88,10 +75,7 @@ class ComedyCalculator extends PerformanceCalculator {
     }
 
     get volumeCredits() {
-        let result = 0;
-        result += Math.max(this.performance.audience - 30, 0);
-        result += Math.floor(this.performance.audience / 5);
-        return result;
+        return super.volumeCredits + Math.floor(this.performance.audience / 5);
     }
 }
 
